@@ -1,0 +1,6 @@
+#+TITLE: Knight Jump
+
+ Knight Jump: a web app to find the smallest path to a square for a piece in the
+ chess board!
+
+[[./knight-jump.gif]]
