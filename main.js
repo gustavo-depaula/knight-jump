@@ -84,15 +84,15 @@ function findPath(originalSquare, targetSquare) {
     `${board.fen()} w KQkq - 0 1`
   );
   const chess = new Chess(`${board.fen()} w - - 1 45`);
+  const piece = chess.get(originalSquare);
   const getSquare = (move) => move.slice(1);
   const moves = genericProblemSearch(
     {
-      getStartState: () => `N${originalSquare}`,
+      getStartState: () => `${piece.type.toUpperCase()}${originalSquare}`,
       isGoalState: (square) => targetSquare === getSquare(square),
       getSuccessors: (move) => {
         const square = getSquare(move);
         // console.log("originalSquare = ", originalSquare);
-        const piece = chess.get(originalSquare);
         // console.log("piece = ", piece);
         if (chess.put(piece, square)) {
           const moves = chess.moves({ square });
