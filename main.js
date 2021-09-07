@@ -44,21 +44,14 @@ function genericProblemSearch(problem, fringeDataStructure) {
   const getNext = (node) =>
     getSuccessors(node).filter((node) => !hasVisitedNode(node));
 
-  let solution = null;
   const fringe = new fringeDataStructure();
   fringe.push([startingNode]);
 
   while (fringe.length) {
-    // console.log("fringe = ", JSON.stringify(fringe));
-    // console.log("visitedNodes = ", visitedNodes);
-
     const candidate = fringe.shift();
-    // console.log("candidate = ", candidate);
     const node = candidate[candidate.length - 1];
-    // console.log("node = ", node);
 
     if (isTargetNode(node)) {
-      // console.log("isTarget");
       return candidate;
     }
 
@@ -66,23 +59,15 @@ function genericProblemSearch(problem, fringeDataStructure) {
       visitNode(node);
 
       const ns = getNext(node);
-      // console.log("ns = ", ns);
       ns.forEach((n) => {
         const newCandidate = [...candidate, n];
         fringe.push(newCandidate);
       });
     }
   }
-  return solution;
 }
 
 function findPath(originalSquare, targetSquare) {
-  console.log("targetSquare = ", targetSquare);
-  console.log(
-    "originalSquare = ",
-    originalSquare,
-    `${board.fen()} w KQkq - 0 1`
-  );
   const chess = new Chess(`${board.fen()} w - - 1 45`);
   const piece = chess.get(originalSquare);
   const getSquare = (move) => move.slice(1);
@@ -92,15 +77,14 @@ function findPath(originalSquare, targetSquare) {
       isGoalState: (square) => targetSquare === getSquare(square),
       getSuccessors: (move) => {
         const square = getSquare(move);
-        // console.log("originalSquare = ", originalSquare);
-        // console.log("piece = ", piece);
         if (chess.put(piece, square)) {
           const moves = chess.moves({ square });
-          // console.log("moves = ", moves);
           if (square !== originalSquare) {
             chess.remove(square);
           }
-          return moves;
+          return moves
+            .map((m) => m.replace("#", ""))
+            .map((m) => m.replace("+", ""));
         }
         return [];
       },
@@ -108,16 +92,21 @@ function findPath(originalSquare, targetSquare) {
     Array
   );
 
-  console.log("result=", moves);
+  if (!moves) {
+    console.log("couldn't do it");
+    return;
+  }
 
   const makeAMove = (moves) => {
     const [from, to, ...rest] = moves;
     board.move(`${getSquare(from)}-${getSquare(to)}`);
-    console.log("moves = ", moves);
-    console.log("rest = ", rest);
     if (rest.length) {
       setTimeout(() => {
         makeAMove([to, ...rest]);
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        makeTransition("restart");
       }, 1000);
     }
   };
@@ -187,6 +176,8 @@ const findJumpStateMachine = {
     onEnter: () => {
       const { originalSquare, targetSquare } = findJumpStateContext;
       findPath(originalSquare, targetSquare);
+    },
+    restart: () => {
       return findJumpStateEnum.inactive;
     },
   },
