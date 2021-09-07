@@ -203,11 +203,9 @@ const makeTransition = (t, ...args) => {
   onEnter = findJumpStateMachine[findJumpState].onEnter || (() => {});
   let returned = onEnter();
   while (returned) {
+    findJumpState = returned;
     onEnter = findJumpStateMachine[findJumpState].onEnter || (() => {});
     returned = onEnter();
-    if (returned) {
-      findJumpState = returned;
-    }
   }
 };
 let findJumpStateContext = {
