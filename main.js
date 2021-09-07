@@ -76,6 +76,7 @@ function findPath(originalSquare, targetSquare) {
       getStartState: () => `${piece.type.toUpperCase()}${originalSquare}`,
       isGoalState: (square) => targetSquare === getSquare(square),
       getSuccessors: (move) => {
+        chess.remove(originalSquare);
         const square = getSquare(move);
         if (chess.put(piece, square)) {
           const moves = chess.moves({ square });
