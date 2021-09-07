@@ -59,7 +59,7 @@ function genericProblemSearch(problem, fringeDataStructure) {
 
     if (isTargetNode(node)) {
       // console.log("isTarget");
-      solution = candidate;
+      return candidate;
     }
 
     if (!hasVisitedNode(node)) {
